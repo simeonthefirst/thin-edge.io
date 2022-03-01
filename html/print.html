@@ -365,6 +365,8 @@ Checking if configuration for requested bridge already exists.
 
 Validating the bridge certificates.
 
+Creating the device in Cumulocity cloud.
+
 Saving configuration for requested bridge.
 
 Restarting mosquitto service.
@@ -375,6 +377,10 @@ Enabling mosquitto service on reboots.
 
 Successfully created bridge connection!
 
+Sending packets to check connection. This may take up to 2 seconds.
+
+Connection check is successful.
+
 Checking if tedge-mapper is installed.
 
 Starting tedge-mapper-c8y service.
@@ -382,11 +388,6 @@ Starting tedge-mapper-c8y service.
 Persisting tedge-mapper-c8y on reboot.
 
 tedge-mapper-c8y service successfully started and enabled!
-
-Sending packets to check connection. This may take up to 10 seconds.
-
-Try 1 / 2: Sending a message to Cumulocity.
-Received expected response message, connection check is successful.
 
 Enabling software management.
 
@@ -449,11 +450,11 @@ See this <a href="tutorials/connect-c8y.html">tutorial</a>, if you want to conne
 This identifier will be used to uniquely identify your devices among others in your cloud tenant.
 This identifier will be also used as the Common Name (CN) of the certificate.
 Indeed, this certificate aims to authenticate that this device is the device with that identity.</p>
-<pre><code>$ sudo tedge cert create --device-id my-device
+<pre><code class="language-shell">$ sudo tedge cert create --device-id my-device
 </code></pre>
 <h2 id="show-certificate-details"><a class="header" href="#show-certificate-details">Show certificate details</a></h2>
 <p>You can then check the content of that certificate.</p>
-<pre><code>$ sudo tedge cert show
+<pre><code class="language-shell">$ sudo tedge cert show
 Device certificate: /etc/tedge/device-certs/tedge-certificate.pem
 Subject: CN=my-device, O=Thin Edge, OU=Test Device
 Issuer: CN=my-device, O=Thin Edge, OU=Test Device
@@ -488,11 +489,11 @@ The new device can be seen on the IoT Hub portal by navigating to &quot;Explores
 <h2 id="configure-the-device-1"><a class="header" href="#configure-the-device-1">Configure the device</a></h2>
 <p>To connect the device to the Azure IoT Hub, one needs to set the URL/Hostname of the IoT Hub and the root certificate of the IoT Hub as below.</p>
 <p>Set the URL/Hostname of your Azure IoT Hub.</p>
-<pre><code>sudo tedge config set az.url your-iot-hub-name.azure-devices.net
+<pre><code class="language-shell">sudo tedge config set az.url your-iot-hub-name.azure-devices.net
 </code></pre>
 <p>The URL/Hostname can be found in the Azure web portal, clicking on the overview section of your IoT Hub.</p>
 <p>Set the path to the root certificate if necessary. The default is <code>/etc/ssl/certs</code>.</p>
-<pre><code>sudo tedge config set az.root.cert.path /etc/ssl/certs/Baltimore_CyberTrust_Root.pem
+<pre><code class="language-shell">sudo tedge config set az.root.cert.path /etc/ssl/certs/Baltimore_CyberTrust_Root.pem
 </code></pre>
 <p>This will set the root certificate path of the Azure IoT Hub.
 In most of the Linux flavors, the certificate will be present in /etc/ssl/certs. If not found download it from <a href="https://www.digicert.com/kb/digicert-root-certificates.htm">here</a>.</p>
@@ -505,8 +506,7 @@ This command configures the MQTT broker:</p>
 </ul>
 <p>Also, if you have installed <code>tedge_mapper</code>, this command starts and enables the tedge-mapper-az systemd service.
 At last, it sends packets to Azure IoT Hub to check the connection.</p>
-<pre><code>$ sudo tedge connect az
-
+<pre><code class="language-shell">$ sudo tedge connect az
 Checking if systemd is available.
 
 Checking if configuration for requested bridge already exists.
@@ -519,27 +519,28 @@ Restarting mosquitto service.
 
 Awaiting mosquitto to start. This may take up to 5 seconds.
 
-Persisting mosquitto on reboot.
+Enabling mosquitto service on reboots.
 
 Successfully created bridge connection!
 
+Sending packets to check connection. This may take up to 2 seconds.
+
+Connection check is successful.
+
 Checking if tedge-mapper is installed.
 
-Starting tedge-mapper service.
+Starting tedge-mapper-az service.
 
-Persisting tedge-mapper on reboot.
+Persisting tedge-mapper-az on reboot.
 
-tedge-mapper service successfully started and enabled!
+tedge-mapper-az service successfully started and enabled!
 
-Sending packets to check connection. This may take up to 10 seconds.
-
-Received expected response message, connection check is successful.
 </code></pre>
 <h2 id="sending-your-first-telemetry-data-1"><a class="header" href="#sending-your-first-telemetry-data-1">Sending your first telemetry data</a></h2>
 <p>Sending data to Azure is done using MQTT over topics prefixed with <code>az</code>.
 Any messages sent on the topic will be forwarded to Azure.
 Here, we use <code>tedge mqtt pub az/messages/events/</code> a message to be understood as a temperature of 20 Degree.</p>
-<pre><code>$ tedge mqtt pub az/messages/events/ '{&quot;temperature&quot;: 20}'
+<pre><code class="language-shell">$ tedge mqtt pub az/messages/events/ '{&quot;temperature&quot;: 20}'
 </code></pre>
 <p>To view the messages that were sent from the device to the cloud, follow this <a href="https://docs.microsoft.com/en-us/azure/iot-hub/quickstart-send-telemetry-cli#create-and-monitor-a-device">document</a>.</p>
 <p>More info about sending telemetry to Azure can be found <a href="https://docs.microsoft.com/en-us/azure/iot-hub/quickstart-send-telemetry-dotnet">here</a></p>
@@ -1650,7 +1651,7 @@ Successfully created bridge connection!
 
 Sending packets to check connection. This may take up to 2 seconds.
 
-Connection check is successfull.
+Connection check is successful.
 
 Checking if tedge-mapper is installed.
 
@@ -1691,19 +1692,24 @@ Applying changes to mosquitto.
 
 Cumulocity Bridge successfully disconnected!
 
-Stopping tedge-mapper service.
+Stopping tedge-mapper-c8y service.
 
-Disabling tedge-mapper service.
+Disabling tedge-mapper-c8y service.
 
-tedge-mapper service successfully stopped and disabled!
+tedge-mapper-c8y service successfully stopped and disabled!
 
+Stopping tedge-agent service.
+
+Disabling tedge-agent service.
+
+tedge-agent service successfully stopped and disabled!
 </code></pre>
 <blockquote>
 <p>Note: <code>tedge disconnect c8y</code> also stops and disable <strong>tedge-mapper</strong> service if it is installed on the device.</p>
 </blockquote>
 <p>And now you can issue <a href="howto-guides/../references/tedge-connect.html"><code>tedge connect c8y</code></a> to create new bridge.</p>
-<h4 id="connection-check-failure"><a class="header" href="#connection-check-failure">Connection check failure</a></h4>
-<p>Sample output of tedge connect when this error occurs:</p>
+<h4 id="connection-check-warning"><a class="header" href="#connection-check-warning">Connection check warning</a></h4>
+<p>Sample output of tedge connect when this warning occurs:</p>
 <pre><code class="language-shell">$ sudo tedge connect c8y
 Checking if systemd is available.
 
@@ -1711,31 +1717,42 @@ Checking if configuration for requested bridge already exists.
 
 Validating the bridge certificates.
 
+Creating the device in Cumulocity cloud.
+
 Saving configuration for requested bridge.
 
 Restarting mosquitto service.
 
 Awaiting mosquitto to start. This may take up to 5 seconds.
 
-Persisting mosquitto on reboot.
+Enabling mosquitto service on reboots.
 
 Successfully created bridge connection!
 
+Sending packets to check connection. This may take up to 2 seconds.
+
+ERROR: Local MQTT publish has timed out.
+Warning: Bridge has been configured, but Cumulocity connection check failed.
+
 Checking if tedge-mapper is installed.
 
-Starting tedge-mapper service.
+Starting tedge-mapper-c8y service.
 
-Persisting tedge-mapper on reboot.
+Persisting tedge-mapper-c8y on reboot.
 
-tedge-mapper service successfully started and enabled!
+tedge-mapper-c8y service successfully started and enabled!
 
-Sending packets to check connection. This may take up to 10 seconds.
+Enabling software management.
 
-Try 1 / 2: Sending a message to Cumulocity. ... No response. If the device is new, it's normal to get no response in the first try.
-Try 2 / 2: Sending a message to Cumulocity. ... No response.
-Warning: Bridge has been configured, but Cumulocity connection check failed.
+Checking if tedge-agent is installed.
+
+Starting tedge-agent service.
+
+Persisting tedge-agent on reboot.
+
+tedge-agent service successfully started and enabled!
 </code></pre>
-<p>This error may be caused by some of the following reasons:</p>
+<p>This warning may be caused by some of the following reasons:</p>
 <ul>
 <li>No access to Internet connection</li>
 </ul>
