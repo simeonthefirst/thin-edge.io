@@ -56,17 +56,33 @@ pub fn read_tedge_logs(
 ) -> Result<String, anyhow::Error> {
     let mut output = String::new();
 
-    // NOTE: As per documentation of std::fs::read_dir:
-    // "The order in which this iterator returns entries is platform and filesystem dependent."
-    // Therefore, files are sorted by date.
-    let mut read_vector: Vec<_> = std::fs::read_dir(logs_dir)?
-        .filter_map(|r| r.ok())
-        .filter(|dir_entry| {
-            get_datetime_from_file_path(&dir_entry.path())
-                .map(|dt| !(dt < smartrest_obj.date_from || dt > smartrest_obj.date_to))
-                .unwrap_or(false)
-        })
-        .collect();
+    let mut read_vector: Vec<_>;
+
+    if smartrest_obj.log_type == "sensor-values-raw" {
+        // NOTE: As per documentation of std::fs::read_dir:
+        // "The order in which this iterator returns entries is platform and filesystem dependent."
+        // Therefore, files are sorted by date.
+        read_vector = std::fs::read_dir("/home/pi/msa/data/sensor-values-raw/")?
+            .filter_map(|r| r.ok())
+            .filter(|dir_entry| {
+                get_datetime_from_file_path(&dir_entry.path())
+                    .map(|dt| !(dt < smartrest_obj.date_from || dt > smartrest_obj.date_to))
+                    .unwrap_or(false)
+            })
+            .collect();
+    } else {
+        // NOTE: As per documentation of std::fs::read_dir:
+        // "The order in which this iterator returns entries is platform and filesystem dependent."
+        // Therefore, files are sorted by date.
+        read_vector = std::fs::read_dir(logs_dir)?
+            .filter_map(|r| r.ok())
+            .filter(|dir_entry| {
+                get_datetime_from_file_path(&dir_entry.path())
+                    .map(|dt| !(dt < smartrest_obj.date_from || dt > smartrest_obj.date_to))
+                    .unwrap_or(false)
+            })
+            .collect();
+    }
 
     read_vector.sort_by_key(|dir| dir.path());
 
